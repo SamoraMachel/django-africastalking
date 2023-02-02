@@ -23,7 +23,7 @@ Quick start
         'aft_payment' # for the payment services
     ]
 
-2. Add the followin configurations in your setting.py ::
+2. Add the following configurations in your setting.py ::
 
     AFRICASTALKING = {
         "USERNAME": <your_username>,
