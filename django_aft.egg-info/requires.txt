@@ -1,3 +1,0 @@
-Django>=4.1.5
-djangorestframework>=3.14.0
-africastalking>=1.2.4
