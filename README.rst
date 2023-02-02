@@ -7,15 +7,15 @@ This SDK provides rest api implementation for the Africa's Talking APIs
 Installation
 -------------
 
-To install this use
-`python
-pip install django-aft
-`
+To install this use ::
+
+    pip install https://github.com/SamoraMachel/django-africastalking/archive/main.zip
+
 
 Quick start
 -----------
 
-1. Add "africastalking" to your INSTALLED_APPS settings like this :
+1. Add "africastalking" to your INSTALLED_APPS settings like this ::
     
     INSTALLED_APPS = [
         ...
@@ -23,7 +23,7 @@ Quick start
         'aft_payment' # for the payment services
     ]
 
-2. Add the followin configurations in your setting.py :
+2. Add the followin configurations in your setting.py ::
 
     AFRICASTALKING = {
         "USERNAME": <your_username>,
@@ -36,7 +36,7 @@ Quick start
     RETRY_DURATION_IN_HOURS = # number of hours before a request is retried e.g 1
 
 
-3. Include the Django Africa's Talking URLconf in your project urls.py like this :
+3. Include the Django Africa's Talking URLconf in your project urls.py like this ::
 
     path('sms/', include('aft_sms.urls')), # for the sms apis
     path('payment/', include('aft_payment.urls')) # for the payment apis
