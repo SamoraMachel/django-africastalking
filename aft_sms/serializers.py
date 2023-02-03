@@ -1,15 +1,15 @@
 from rest_framework import serializers
 
-from aft_sms.models import RecievedSMS, SentSMS
+from aft_sms.models import BulkRecipient, BulkSMS
 
 
-class SentSMSSerializer(serializers.ModelSerializer):
+class BulkRecipientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SentSMS
+        model = BulkRecipient
         fields = "__all__"
 
 
-class RecievedSMSSerializer(serializers.ModelSerializer):
+class BulkSMSSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RecievedSMS
+        model = BulkSMS
         fields = "__all__"

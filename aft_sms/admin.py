@@ -1,36 +1,37 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from .models import RecievedSMS, SentSMS
+from .models import BulkRecipient, BulkSMS
 
 
-@admin.register(SentSMS)
-class SentSMSAdmin(admin.ModelAdmin):
+@admin.register(BulkRecipient)
+class BulkRecipientAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
-        "recipient",
-        "message",
-        "short_code",
-        "enqueue",
-        "keyword",
-        "linkId",
-        "date",
-        "cost",
-        "request_status",
-        "sms_status",
+        'status_code',
+        'number',
+        'cost',
+        'status',
+        'message_id',
     )
-    list_filter = ("enqueue", "date")
 
 
-@admin.register(RecievedSMS)
-class RecievedSMSAdmin(admin.ModelAdmin):
+@admin.register(BulkSMS)
+class BulkSMSAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (None, {'fields' :('recipients', 'message', 'short_code', 'enqueue', 'keyword', 'link_id')}),
+        ('Response', {'fields': (
+            'response_message',
+            'response_recipients'
+        )})
+    )
     list_display = (
-        "id",
-        "message_id",
-        "message",
-        "sender",
-        "linkId",
-        "short_code",
-        "date",
+        'short_code',
+        'enqueue',
+        'keyword',
+        'link_id',
+        'message',
     )
-    list_filter = ("date",)
+    def formfield_for_manytomany(self, db_field, request, **kwargs) :
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
+    list_filter = ('enqueue',)
+    # raw_id_fields = ('response_recipients',)

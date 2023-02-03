@@ -3,8 +3,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
-class SentSMS(models.Model):
-    status_code = [
+class BulkRecipient(models.Model):
+    request_status = [
         (100, "Processed"),
         (101, "Sent"),
         (102, "Queued"),
@@ -19,43 +19,43 @@ class SentSMS(models.Model):
         (502, "RejectedByGateway"),
     ]
 
-    recipient = models.CharField(max_length=20)
+    status_code = models.IntegerField(choices=request_status)
+    number = models.CharField(max_length=50)
+    cost = models.CharField(max_length=20)
+    status = models.CharField(max_length=50)
+    message_id = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name = _("Bulk Recipient")
+        verbose_name_plural = _("Bulk Recipients")
+
+    def __str__(self):
+        return self.status
+
+    def get_absolute_url(self):
+        return reverse("BulkRecipient_detail", kwargs={"pk": self.pk})
+
+
+class BulkSMS(models.Model):
+    recipients = models.TextField()
     message = models.CharField(max_length=256)
-    short_code = models.CharField(max_length=10, null=True, blank=True)
+    short_code = models.CharField(
+        max_length=50, null=True, blank=True, default="AFRICASTKNG"
+    )
     enqueue = models.BooleanField(default=True, null=True, blank=True)
     keyword = models.CharField(max_length=100, null=True, blank=True)
-    linkId = models.CharField(max_length=200, null=True, blank=True)
-    date = models.DateTimeField(auto_now=True)
+    link_id = models.CharField(max_length=200, null=True, blank=True)
 
-    cost = models.CharField(max_length=20, null=True, blank=True)
-    request_status = models.IntegerField(choices=status_code, null=True, blank=True)
-    sms_status = models.CharField(max_length=4, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _("sent_sms")
-        verbose_name_plural = _("sent_sms")
-
-    def __str__(self):
-        return self.recipient
-
-    def get_absolute_url(self):
-        return reverse("sent_sms_detail", kwargs={"pk": self.pk})
-
-
-class RecievedSMS(models.Model):
-    message_id = models.IntegerField()
-    message = models.CharField(max_length=256)
-    sender = models.CharField(max_length=20)
-    linkId = models.CharField(max_length=200, null=True, blank=True)
-    short_code = models.CharField(max_length=10, null=True, blank=True)
-    date = models.DateTimeField()
+    # response
+    response_message = models.CharField(max_length=200, null=True, blank=True)
+    response_recipients = models.ManyToManyField(BulkRecipient)
 
     class Meta:
-        verbose_name = _("recieved_sms")
-        verbose_name_plural = _("recieved_sms")
+        verbose_name = _("Bulk Sms")
+        verbose_name_plural = _("Bulk Sms")
 
     def __str__(self):
-        return self.sender
+        return self.message
 
     def get_absolute_url(self):
-        return reverse("recievedsms_detail", kwargs={"pk": self.pk})
+        return reverse("bulk_sms_detail", kwargs={"pk": self.pk})
