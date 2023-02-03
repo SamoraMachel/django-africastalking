@@ -296,7 +296,7 @@ class CardCheckout(models.Model):
         verbose_name_plural = _("Card Checkout")
 
     def __str__(self):
-        return self.prodcut_name
+        return self.product_name
 
     def get_absolute_url(self):
         return reverse("cardcheckout_detail", kwargs={"pk": self.pk})

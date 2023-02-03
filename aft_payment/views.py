@@ -1,35 +1,28 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 
+import africastalking
+
 from aft_payment.models import (
-    B2CEntries,
-    B2CRecipient,
     Bank,
     BankTransfer,
-    BTRecipient,
-    BTResponseEntry,
     BusinessToBusiness,
     BusinessToCustomer,
-    Card,
     CardCheckout,
     CustomerToBusiness,
     TopupStash,
     WalletTransfer,
 )
 from aft_payment.serializers import (
-    B2CEntriesSerializer,
-    B2CRecipientSerializer,
     BankSerializer,
     BankTransferSerializer,
-    BTRecipientSerializer,
-    BTResponseEntrySerializer,
     BusinessToBusinessSerializer,
     BusinessToCustomerSerializer,
     CardCheckoutSerializer,
-    CardSerializer,
     CustomerToBusinessSerializer,
     TopupStashSerializer,
     WalletTransferSerializer,
+    CardSerializer
 )
 
 # Create your views here.
@@ -63,7 +56,33 @@ class BankTransferViewSet(viewsets.ModelViewSet):
 class CardCheckoutViewSet(viewsets.ModelViewSet):
     queryset = CardCheckout.objects.all()
     serializer_class = CardCheckoutSerializer
-
+    
+    def create(self, request, *args, **kwargs):
+        card_checkout = africastalking.Payment
+        payment_card =  request.data.get('payment_card', None),
+        
+        response = card_checkout.card_checkout(
+            request.data['product_name'],
+            request.data['currency_code'],
+            request.data['amount'],
+            payment_card[0],
+            request.data.get('checkout_token', None),
+            request.data['narration'],
+            request.data.get('metadata', {})
+        )
+        
+        request.data['status'] = response['status']
+        request.data['description'] = response['description']
+        request.data['transaction_id'] = response.get("transactionId", None)
+        
+        if (payment_card is not None) :
+            card_serializer = CardSerializer(data=payment_card[0])
+            card_serializer.is_valid()
+            instance = card_serializer.save()
+            request.data['payment_card'] = instance.id
+    
+        
+        return super().create(request, *args, **kwargs)
 
 class WalletTransferViewSet(viewsets.ModelViewSet):
     queryset = WalletTransfer.objects.all()
